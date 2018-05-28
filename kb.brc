@@ -96,7 +96,7 @@ PingDance = False
 )
 
 
-(($Event == "FaceOut") and (Stage != ""))=> (
+(($Event == "FaceOut") and ($Stage != ""))=> (
 	(Stage = "Bye") and
 	(clear $Event)
 )
