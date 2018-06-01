@@ -297,7 +297,10 @@ PingDance = False
 (($Stage == "QuizStart") and ($isPlaying != "True")) => (
 	(sayGood = "True") and (
 	(quiz "quiz1.csv" randomOrder 3:6) or
-	(quiz "quiz2.csv" randomOrder 3:6))
+	(quiz "quiz2.csv" randomOrder 3:6) or
+	(quiz "quiz3.csv" randomOrder 4:7) or
+	(quiz "quiz4.csv" randomOrder 4:7) or
+	(quiz "quiz5.csv" randomOrder 3:6))
 )
 
 (($Stage == "QuizStart") and ($inQuiz != "True") and ($isPlaying != "True")) => (
