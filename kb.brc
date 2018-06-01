@@ -177,7 +177,7 @@ PingDance = False
 
 (($Stage == "meaninglessQuestion1") and ($isPlaying != "True")) => (
 	(sayFast "Это твой первый полет в космос или ты бывалый? ") 
-	and (GPIO 100 1,0,1,1 10000)
+	and (GPIO 100 1,0,1,1 4000)
 	and (Stage = "meaninglessResponseWait1") and (stayActive)
 )
 
@@ -276,7 +276,7 @@ PingDance = False
 
 
 (($Stage == "preQuizQuestion") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 20000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuest")
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuest")
 )
 
 (($Stage == "QuizQuest") and ($ArduinoInput == "0100")) => (
