@@ -197,7 +197,7 @@ PingDance = False
 
 (($Stage == "meaninglessQuestion2") and ($isPlaying != "True")) => (
 	(sayFast "Ненавидишь ли ты блокчейн так же, как и я? ") 
-	and (GPIO 100 1,0,1,1 10000)
+	and (GPIO 100 1,0,1,1 4000)
 	and (Stage = "meaninglessResponseWait2") and (stayActive)
 )
 
