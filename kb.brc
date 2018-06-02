@@ -150,13 +150,13 @@ PingDance = False
 (($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "sadness")) => "(EmotionSay = "{Грустный|Задумчивый|Печальный}")
 (($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "surprise")) => "(EmotionSay = "Удивлённый")
 (($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "anger")) => "(EmotionSay = "{Хмурый|Серьезный}")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "neutral")) => "(EmotionSay = "{Спокойный|Умудрённый|Задумчивый|Няшный}")
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "neutral")) => "(EmotionSay = "{Спокойный|Умудрённый|Задумчивый|Няяяшный}")
 
 (($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "happiness")) => "(EmotionSay = "{Весёлая|Позитивная|Кавайная}")
 (($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "sadness")) => "(EmotionSay = "{Грустная|Задумчивая|Печальная}")
 (($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "surprise")) => "(EmotionSay = "Удивлённая")
 (($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "anger")) => "(EmotionSay = "{Хмурая|Серьезная}")
-(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "neutral")) => "(EmotionSay = "{Спокойная|Умудрённая|Задумчивая|Няшная}")
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "neutral")) => "(EmotionSay = "{Спокойная|Умудрённая|Задумчивая|Няяяшная}")
 
 ($Event == "FaceRecognized") => (Name = "${NameSay} ${AgeSay} ${EmotionSay}")
 
@@ -264,12 +264,12 @@ PingDance = False
 )
 
 (($Stage == "preFactResponseWait") and ($ArduinoInput == "0100")) => (
-	(GPIO 100 1,0,1,1 4000) and 
+	(GPIO 100 0,1,0,0 4000) and 
 	(Stage = "preFactResponse")
 )
 
 (($Stage == "preFactResponseWait") and ($ArduinoInput == "0010")) => (
-	(GPIO 100 1,0,1,1 4000) and 
+	(GPIO 100 0,1,0,0 4000) and 
 	(Stage = "preQuizQuestion")
 )
 
