@@ -129,6 +129,18 @@ PingDance = False
 	(clear $Event)
 )
 
+($Internet == "False") => (
+	(NameSay = "{Астронавт|Космонавт|Земной мужчина|Звездоплаватель|Покоритель космоса|Летун космический|Звездный странник|Космический странник|Исследователь|Автостопщик по галактике}) and
+	(EmotionSay = "{Весёлый|Позитивный|Кавайный|Грустный|Задумчивый|Печальный|Спокойный|Умудрённый|Задумчивый|Няашный|Хмурый|Серьезный}") and
+	(AgeSay = "{кажется, постарше двенадцати лет|меньше дюжины лет|лет двадцати|старше двадцати лет|не больше тридцати лет|за тридцать}") and
+	(Stage = "NoInternetConcat")
+)
+($Stage == "NoInternetConcat") => (
+	(Name = "${NameSay} ${AgeSay} ${EmotionSay}") and
+	(Event = "NoInternetFaceRecognized") and
+	(Stage = "startConversation")
+)
+
 (($Event == "FaceRecognized") and ($Age in [0,10])) => (AgeSay = "меньше дюжины лет")
 (($Event == "FaceRecognized") and ($Age in [9,16])) => (AgeSay = "кажется, постарше двенадцати лет")
 (($Event == "FaceRecognized") and ($Age in [15,23])) => (AgeSay = "лет двадцати")
@@ -163,6 +175,12 @@ PingDance = False
 (($Event == "FaceRecognized") and ($Stage == "startConversation") and ($isPlaying != "True"))=> (
 	((GPIO 100 1,1,1,0 4000) or (GPIO 100 0,0,0,1 4000)) and
 	(userName = "{${Gender}:M=Астронавт|F=Астронавтка}") and 
+	((say "${Name}! то, что ты ${EmotionSay} -- это нормально для {твоего вида|твоей планеты|твоей космической расы|жителя твоей планеты|человека|вида высших приматов|гуманоидов|прямоходящих разумных существ|обитателей Земли}.") or (say "Приветствую тебя, ${Name}! ")) and 
+	(Stage = "aboutMe1")
+)
+
+(($Event == "NoInternetFaceRecognized") and ($Stage == "startConversation") and ($isPlaying != "True"))=> (
+	((GPIO 100 1,1,1,0 4000) or (GPIO 100 0,0,0,1 4000)) and
 	((say "${Name}! то, что ты ${EmotionSay} -- это нормально для {твоего вида|твоей планеты|твоей космической расы|жителя твоей планеты|человека|вида высших приматов|гуманоидов|прямоходящих разумных существ|обитателей Земли}.") or (say "Приветствую тебя, ${Name}! ")) and 
 	(Stage = "aboutMe1")
 )
