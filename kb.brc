@@ -129,18 +129,6 @@ PingDance = False
 	(clear $Event)
 )
 
-(($Event == "FaceIn") and ($Internet == "False")) => (
-	(NameSay = "{Астронавт|Космонавт|Земной мужчина|Звездоплаватель|Покоритель космоса|Летун космический|Звездный странник|Космический странник|Исследователь|Автостопщик по галактике}) and
-	(EmotionSay = "{Весёлый|Позитивный|Кавайный|Грустный|Задумчивый|Печальный|Спокойный|Умудрённый|Задумчивый|Няашный|Хмурый|Серьезный}") and
-	(AgeSay = "{кажется, постарше двенадцати лет|меньше дюжины лет|лет двадцати|старше двадцати лет|не больше тридцати лет|за тридцать}") and
-	(Stage = "NoInternetConcat")
-)
-(($Event == "FaceIn") and ($Stage == "NoInternetConcat")) => (
-	(Name = "${NameSay} ${AgeSay} ${EmotionSay}") and
-	(Event = "NoInternetFaceRecognized") and
-	(Stage = "startConversation")
-)
-
 (($Event == "FaceRecognized") and ($Age in [0,10])) => (AgeSay = "меньше дюжины лет")
 (($Event == "FaceRecognized") and ($Age in [9,16])) => (AgeSay = "кажется, постарше двенадцати лет")
 (($Event == "FaceRecognized") and ($Age in [15,23])) => (AgeSay = "лет двадцати")
@@ -172,6 +160,13 @@ PingDance = False
 
 ($Event == "FaceRecognized") => (Name = "${NameSay} ${AgeSay} ${EmotionSay}")
 
+(($Event == "FaceRecognized") and ($Stage == "startConversation") and ($isPlaying != "True"))=> (
+	((GPIO 100 1,1,1,0 4000) or (GPIO 100 0,0,0,1 4000)) and
+	(userName = "{${Gender}:M=Астронавт|F=Астронавтка}") and 
+	((say "${Name}! то, что ты ${EmotionSay} -- это нормально для {твоего вида|твоей планеты|твоей космической расы|жителя твоей планеты|человека|вида высших приматов|гуманоидов|прямоходящих разумных существ|обитателей Земли}.") or (say "Приветствую тебя, ${Name}! ")) and 
+	(Stage = "aboutMe1")
+)
+
 (($Stage == "aboutMe1") and ($isPlaying != "True")) => (
 	(sayFast "{Если ты думаешь, что я подушка, то ты не ошибаешься.|Меня зовут Лариса Сергеевна, для тебя просто Лариса.|Я самая уникальная робо-подушка во вселенной, буду помогать тебе в полете.}") 
 	and (Stage = "aboutMe2")
@@ -196,11 +191,6 @@ PingDance = False
 (($Stage == "meaninglessQuestion1") and ($isPlaying != "True")) => (
 	(sayFast "Это твой первый полет в космос или ты бывалый? ") 
 	and (GPIO 100 1,0,1,1 4000)
-	and (Stage = "meaninglessResponsePeep1") and (stayActive)
-)
-
-(($Stage == "meaninglessResponsePeep1") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000)
 	and (Stage = "meaninglessResponseWait1") and (stayActive)
 )
 
@@ -221,11 +211,6 @@ PingDance = False
 (($Stage == "meaninglessQuestion2") and ($isPlaying != "True")) => (
 	(sayFast "Ненавидишь ли ты блокчейн так же, как и я? ") 
 	and (GPIO 100 1,0,1,1 4000)
-	and (Stage = "meaninglessResponsePeep2") and (stayActive)
-)
-
-(($Stage == "meaninglessResponsePeep2") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000)
 	and (Stage = "meaninglessResponseWait2") and (stayActive)
 )
 
@@ -256,12 +241,8 @@ PingDance = False
 
 (($Stage == "meaninglessQuestion3") and ($isPlaying != "True")) => (
 	((sayFast "C3PO просто красавчик! А ты его тоже любишь скажи? ") or (sayFast "Любишь ли ты Илона Маска так же, как люблю его я?"))
-	and (GPIO 100 1,0,1,1 4000) and (Stage = "meaninglessResponsePeep3") and (stayActive)
-)
-
-(($Stage == "meaninglessResponsePeep3") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and
-	(Stage = "meaninglessResponseWait3") and (stayActive)
+	and (GPIO 100 1,0,1,1 4000)
+	and (Stage = "meaninglessResponseWait3") and (stayActive)
 )
 
 (($Stage == "meaninglessResponseWait3") and (($ArduinoInput == "0100") or ($ArduinoInput == "0010") or ($ArduinoInput == "0001"))) => (
@@ -272,18 +253,14 @@ PingDance = False
 (($Stage == "meaninglessResponse3") and ($isPlaying != "True")) => (
 	(GPIO 100 0,1,0,0 4000)
 	and ((sayFast "Мне он очень по душе") or (sayFast "как же он хорош"))
-	and (Stage = "preFactQuestion") and (MeaninglessQuestionStage = "False") and (stayActive)
+	and (Stage = "preFactQuestion")
+	and (MeaninglessQuestionStage = "False") and (stayActive)
 )
 
 (($Stage == "preFactQuestion") and ($isPlaying != "True")) => (
 	(sayFast "Хочешь, расскажу что-нибудь занятное про космос?") and
 	(GPIO 100 1,0,1,1 4000) and
-	(Stage = "preFactResponsePeep")
-)
-
-(($Stage == "preFactResponsePeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and
-	(Stage = "preFactResponseWait") and (stayActive)
+	(Stage = "preFactResponseWait")
 )
 
 (($Stage == "preFactResponseWait") and ($ArduinoInput == "0100")) => (
@@ -319,11 +296,7 @@ PingDance = False
 
 
 (($Stage == "preQuizQuestion") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuestPeep")
-)
-
-(($Stage == "QuizQuestPeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and (Stage = "QuizQuest") and (stayActive)
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuest")
 )
 
 (($Stage == "QuizQuest") and ($ArduinoInput == "0100")) => (
@@ -357,11 +330,7 @@ PingDance = False
 
 
 (($Stage == "Diag") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuestPeep")
-)
-
-(($Stage == "DiagQuestPeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and (Stage = "DiagQuest") and (stayActive)
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuest")
 )
 
 (($Stage == "DiagQuest") and ($ArduinoInput == "0100")) => (
@@ -398,11 +367,7 @@ PingDance = False
 
 
 (($Stage == "Disco") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuestPeep")
-)
-
-(($Stage == "DanceQuestPeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and (Stage = "DanceQuest") and (stayActive)
+	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuest")
 )
 
 (($Stage == "DanceQuest") and ($ArduinoInput == "0100")) => (
