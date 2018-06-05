@@ -196,6 +196,7 @@ PingDance = False
 (($Stage == "meaninglessQuestion1") and ($isPlaying != "True")) => (
 	(sayFast "Это твой первый полет в космос или ты бывалый? ") 
 	and (GPIO 100 1,0,1,1 4000)
+	and (Peep = "True")
 	and (Stage = "meaninglessResponseWait1") and (stayActive)
 )
 
@@ -216,6 +217,7 @@ PingDance = False
 (($Stage == "meaninglessQuestion2") and ($isPlaying != "True")) => (
 	(sayFast "Ненавидишь ли ты блокчейн так же, как и я? ") 
 	and (GPIO 100 1,0,1,1 4000)
+	and (Peep = "True")
 	and (Stage = "meaninglessResponseWait2") and (stayActive)
 )
 
@@ -247,6 +249,7 @@ PingDance = False
 (($Stage == "meaninglessQuestion3") and ($isPlaying != "True")) => (
 	((sayFast "C3PO просто красавчик! А ты его тоже любишь скажи? ") or (sayFast "Любишь ли ты Илона Маска так же, как люблю его я?"))
 	and (GPIO 100 1,0,1,1 4000)
+	and (Peep = "True")
 	and (Stage = "meaninglessResponseWait3") and (stayActive)
 )
 
@@ -265,6 +268,7 @@ PingDance = False
 (($Stage == "preFactQuestion") and ($isPlaying != "True")) => (
 	(sayFast "Хочешь, расскажу что-нибудь занятное про космос?") and
 	(GPIO 100 1,0,1,1 4000) and
+	and (Peep = "True")
 	(Stage = "preFactResponseWait")
 )
 
@@ -301,7 +305,7 @@ PingDance = False
 
 
 (($Stage == "preQuizQuestion") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuest")
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuest") and (Peep = "True")
 )
 
 (($Stage == "QuizQuest") and ($ArduinoInput == "0100")) => (
@@ -335,7 +339,7 @@ PingDance = False
 
 
 (($Stage == "Diag") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuest")
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuest") and (Peep = "True")
 )
 
 (($Stage == "DiagQuest") and ($ArduinoInput == "0100")) => (
@@ -372,7 +376,7 @@ PingDance = False
 
 
 (($Stage == "Disco") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuest")
+	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuest") and (Peep = "True")
 )
 
 (($Stage == "DanceQuest") and ($ArduinoInput == "0100")) => (
