@@ -209,8 +209,12 @@ PingDance = False
 (($Stage == "meaninglessQuestion1") and ($isPlaying != "True")) => (
 	(sayFast "Это твой первый полет в космос или ты бывалый? ") 
 	and (GPIO 100 1,0,1,1 4000)
-	and (Peep = "True")
-	and (Stage = "meaninglessResponseWait1") and (stayActive)
+	and (Stage = "meaninglessResponsePeep1") and (stayActive)
+)
+
+(($Stage == "meaninglessResponsePeep1") and ($isPlaying != "True")) => (
+	(play 100 "peep.wav" 1000) and
+	(Stage = "meaninglessResponseWait1") and (stayActive)
 )
 
 (($Stage == "meaninglessResponseWait1") and (($ArduinoInput == "0100") or ($ArduinoInput == "0010") or ($ArduinoInput == "0001"))) => (
@@ -230,8 +234,12 @@ PingDance = False
 (($Stage == "meaninglessQuestion2") and ($isPlaying != "True")) => (
 	(sayFast "Ненавидишь ли ты блокчейн так же, как и я? ") 
 	and (GPIO 100 1,0,1,1 4000)
-	and (Peep = "True")
-	and (Stage = "meaninglessResponseWait2") and (stayActive)
+	and (Stage = "meaninglessResponsePeep2") and (stayActive)
+)
+
+(($Stage == "meaninglessResponsePeep2") and ($isPlaying != "True")) => (
+	(play 100 "peep.wav" 1000) and
+	(Stage = "meaninglessResponseWait2") and (stayActive)
 )
 
 (($Stage == "meaninglessResponseWait2") and (($ArduinoInput == "0100") or ($Event == "Key_6") )) => (
@@ -262,8 +270,12 @@ PingDance = False
 (($Stage == "meaninglessQuestion3") and ($isPlaying != "True")) => (
 	((sayFast "C3PO просто красавчик! А ты его тоже любишь скажи? ") or (sayFast "Любишь ли ты Илона Маска так же, как люблю его я?"))
 	and (GPIO 100 1,0,1,1 4000)
-	and (Peep = "True")
-	and (Stage = "meaninglessResponseWait3") and (stayActive)
+	and (Stage = "meaninglessResponsePeep3") and (stayActive)
+)
+
+(($Stage == "meaninglessResponsePeep3") and ($isPlaying != "True")) => (
+	(play 100 "peep.wav" 1000) and
+	(Stage = "meaninglessResponseWait3") and (stayActive)
 )
 
 (($Stage == "meaninglessResponseWait3") and (($ArduinoInput == "0100") or ($ArduinoInput == "0010") or ($ArduinoInput == "0001"))) => (
@@ -281,8 +293,12 @@ PingDance = False
 (($Stage == "preFactQuestion") and ($isPlaying != "True")) => (
 	(sayFast "Хочешь, расскажу что-нибудь занятное про космос?") and
 	(GPIO 100 1,0,1,1 4000) and
-	and (Peep = "True")
-	(Stage = "preFactResponseWait")
+	(Stage = "preFactResponsePeep")
+)
+
+(($Stage == "preFactResponsePeep") and ($isPlaying != "True")) => (
+	(play 100 "peep.wav" 1000) and
+	(Stage = "preFactResponseWait") and (stayActive)
 )
 
 (($Stage == "preFactResponseWait") and ($ArduinoInput == "0100")) => (
@@ -318,7 +334,12 @@ PingDance = False
 
 
 (($Stage == "preQuizQuestion") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuest") and (Peep = "True")
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuestPeep")
+)
+
+(($Stage == "QuizQuestPeep") and ($isPlaying != "True")) => (
+	(play 100 "peep.wav" 1000) and
+	(Stage = "QuizQuest") and (stayActive)
 )
 
 (($Stage == "QuizQuest") and ($ArduinoInput == "0100")) => (
@@ -352,7 +373,12 @@ PingDance = False
 
 
 (($Stage == "Diag") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuest") and (Peep = "True")
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuestPeep")
+)
+
+(($Stage == "DiagQuestPeep") and ($isPlaying != "True")) => (
+	(play 100 "peep.wav" 1000) and
+	(Stage = "DiagQuest") and (stayActive)
 )
 
 (($Stage == "DiagQuest") and ($ArduinoInput == "0100")) => (
@@ -389,7 +415,12 @@ PingDance = False
 
 
 (($Stage == "Disco") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuest") and (Peep = "True")
+	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuestPeep")
+)
+
+(($Stage == "DanceQuestPeep") and ($isPlaying != "True")) => (
+	(play 100 "peep.wav" 1000) and
+	(Stage = "DanceQuest") and (stayActive)
 )
 
 (($Stage == "DanceQuest") and ($ArduinoInput == "0100")) => (
