@@ -1,10 +1,5 @@
 PingDance = False
 
-(($Peep == "True") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and
-	(Peep = False)
-)
-
 (($Event == "Ping") and ($PingDance == "2"))=> (
 	(PingDance = "False") and
 	(clear $Event)
