@@ -353,27 +353,9 @@ PingDance = False
 )
 
 (($Stage == "preFactQuestion") and ($isPlaying != "True")) => (
-	(sayFast "Хочешь, расскажу что-нибудь занятное про космос?") and
-	(GPIO 100 1,0,1,1 4000) and
-	(Stage = "preFactResponseWait")
-)
-
-(($Stage == "preFactResponseWait") and ($ArduinoInput == "0100")) => (
-	(GPIO 100 0,1,0,0 4000) and 
+	(sayFast "Интересный факт.") and
 	(Stage = "preFactResponse")
 )
-
-(($Stage == "preFactResponseWait") and ($ArduinoInput == "0010")) => (
-	(GPIO 100 0,1,0,0 4000) and 
-	(Stage = "preQuizQuestion")
-)
-
-
-(($Stage == "preFactResponseWait") and ($ArduinoInput == "0001")) => (
-	(GPIO 100 0,1,0,0 4000) 
-	and (((sayFast "расскажу всё таки факт") and (Stage = "preFactResponse")) or ((sayFast "не скажу факт") and (Stage = "preQuizQuestion")))
-)
-
 
 (($Stage == "preFactResponse") and ($isPlaying != "True")) => (
 	(
