@@ -2,11 +2,13 @@ PingDance = False
 
 (($Event == "Ping") and ($PingDance == "2"))=> (
 	(PingDance = "False") and
+	(stayActive) and
 	(clear $Event)
 )
 
 (($Event == "Ping") and ($PingDance == "1"))=> (
 	(PingDance = "2") and
+	(stayActive) and
 	(clear $Event)
 )
 
@@ -39,7 +41,8 @@ PingDance = False
 	(play 100 "04.mp3" 200000) or
 	(play 100 "05.mp3" 200000) or
 	(play 100 "06.mp3" 200000)
-	)	
+	) and
+	(stayActive)	
 )
 
 ($PlaySongs == "2") => (
@@ -51,7 +54,8 @@ PingDance = False
 	(play 100 "10.mp3" 200000) or
 	(play 100 "11.mp3" 200000) or
 	(play 100 "12.mp3" 200000)
-	)	
+	) and
+	(stayActive)	
 )
 
 ($PlaySongs == "3") => (
@@ -62,8 +66,12 @@ PingDance = False
 	(play 100 "15.mp3" 200000) or
 	(play 100 "16.mp3" 200000) or
 	(play 100 "17.mp3" 200000)
-	)	
+	) and
+	(stayActive)
 )
+
+
+
 
 (($Event == "FaceIn") and ($MeaninglessQuestionStage == "True") and ($RecapturingMeaninglessQuestion == "True")) => (
 	(Stage = "MeaninglessQuestion") and (RecapturingMeaninglessQuestion = "False") and (stayActive)
@@ -109,11 +117,31 @@ PingDance = False
 	(AgeSay = "") and (Name = "") and (isPaused = "") and (inQuiz = "") and (stopQuiz = "") and (sayGood = "") and (lastAnswer = "") and (stayActive)
 )
 
+
 ($Event == "FaceIn") => (
-	(GPIO 100 1,0,1,0 10000) and 
-	(sayFast "{Хьюстон, Хьюстон, как слышно?| Это ваш первый сеанс связи с подушкой. Поехали!|Земля, Земля, это подушка, приём}") and 
-	(Stage = "startConversation") and 
+	(GPIO 100 1,0,1,0 10000) and
+	(sayFast "Нья-ха-ха-ха") and
+	(Stage = "sayHi") and 
+	(AgeSaid = "False") and
+	(EmotionSaid = "False") and
 	(clear $Event)
+)
+
+(($Stage == "sayHi") and ($Internet == "False") and ($isPlaying != "True")) => (
+		(sayFast "Привет! {Астронавт|Космонавт|Земной мужчина|Звездоплаватель|Покоритель космоса|Летун космический|Звездный странник|Космический странник|Исследователь|Автостопщик по галактике}") and
+		(Stage = "sayAge")
+)
+
+(($Stage == "sayAge") and ($Internet == "False") and ($isPlaying != "True")) => (
+	(sayFast "{Звёзды говорят, что тебе не больше тридцати лет|Звёзды говорят, что тебе меньше дюжины лет|Звёзды говорят, что тебе кажется, постарше двенадцати лет}") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+
+(($Stage == "sayEmo") and ($Internet == "False") and ($isPlaying != "True")) => (
+	(sayFast "{Весёлый|Позитивный|Кавайный|Спокойный|Умудрённый|Задумчивый|Няашный|Хмурый|Серьёзный|Удивлённый}") and
+	(EmotionSaid = "True") and
+	(Stage = "startConversation") and 
+	(Event = "FaceRecognized")
 )
 
 (($Event == "FaceIn") and ($FaceCount > 1)) => (
@@ -125,63 +153,133 @@ PingDance = False
 ($Stage == "goaway") => (ext:Recapture "After:5")
 (($Stage == "goaway") and ($FaceCount == 1)) => (
 	(sayFast "наконец-то ты один!") and 
-	(Stage = "startConversation") and 
+	(Stage = "sayHi") and 
 	(clear $Event)
 )
 
-(($Event == "FaceIn") and ($Internet == "False")) => (
-	(NameSay = "{Астронавт|Космонавт|Земной мужчина|Звездоплаватель|Покоритель космоса|Летун космический|Звездный странник|Космический странник|Исследователь|Автостопщик по галактике}) and
-	(EmotionSay = "{Весёлый|Позитивный|Кавайный|Грустный|Задумчивый|Печальный|Спокойный|Умудрённый|Задумчивый|Няашный|Хмурый|Серьезный}") and
-	(AgeSay = "{кажется, постарше двенадцати лет|меньше дюжины лет|лет двадцати|старше двадцати лет|не больше тридцати лет|за тридцать}") and
-	(Stage = "NoInternetConcat")
-)
-(($Event == "FaceIn") and ($Stage == "NoInternetConcat")) => (
-	(Name = "${NameSay} ${AgeSay} ${EmotionSay}") and
-	(Event = "NoInternetFaceRecognized") and
-	(Stage = "startConversation")
+(($Event == "FaceRecognized") and  ($Gender == "M") and ($Stage == "sayHi") and ($isPlaying != "True")) => (
+	(sayFast "Привет! {Астронавт|Космонавт|Земной мужчина|Звездоплаватель|Покоритель космоса|Летун космический|Звездный странник|Космический странник|Исследователь|Автостопщик по галактике}")
+	 and (Stage = "sayAge")
 )
 
-(($Event == "FaceRecognized") and ($Age in [0,10])) => (AgeSay = "меньше дюжины лет")
-(($Event == "FaceRecognized") and ($Age in [9,16])) => (AgeSay = "кажется, постарше двенадцати лет")
-(($Event == "FaceRecognized") and ($Age in [15,23])) => (AgeSay = "лет двадцати")
-(($Event == "FaceRecognized") and ($Age in [22,33])) => (AgeSay = "старше двадцати лет")
-(($Event == "FaceRecognized") and ($Gender == "F") and ($Age in [32,999])) => (AgeSay = "не больше тридцати лет")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [32,46])) => (AgeSay = "за тридцать")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [45,61])) => (AgeSay = "лет пятидесяти")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [60,76])) => (AgeSay = "старше пятидесяти лет")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [75,999])) => (AgeSay = "лет семидесяти")
+(($Event == "FaceRecognized") and  ($Gender == "F") and ($Stage == "sayHi") and ($isPlaying != "True")) => (
+	(sayFast "Привет! {Астронавтка|Космонавтка|Земная женщина|Звездоплавательница|Покорительница космоса|Летунья космическая|Звездная странница|Космическая странница|Исследовательница|Автостопщица по галактике}")
+	 and (Stage = "sayAge")
+)
 
-(($Event == "FaceRecognized") and  ($Gender == "M")) => (NameSay = "{Астронавт|Космонавт|Земной мужчина|Звездоплаватель|Покоритель космоса|Летун космический|Звездный странник|Космический странник|Исследователь|Автостопщик по галактике}")
-(($Event == "FaceRecognized") and  ($Gender == "F")) => (NameSay = "{Астронавтка|Космонавтка|Земная женщина|Звездоплавательница|Покорительница космоса|Летунья космическая|Звездная странница|Космическая странница|Исследовательница|Автостопщица по галактике}")
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Age in [32,999]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что тебе не больше тридцати лет") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+
+(($Event == "FaceRecognized") and ($Age in [0,10]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что тебе меньше дюжины лет") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+	
+(($Event == "FaceRecognized") and ($Age in [9,16]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что тебе кажется, постарше двенадцати лет") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+	
+(($Event == "FaceRecognized") and ($Age in [15,23]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что тебе не больше лет двадцати") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+	
+(($Event == "FaceRecognized") and ($Age in [22,33]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что ты чуть старше двадцати лет") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+	
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [32,46]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что тебе за тридцать") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+	
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [45,61]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что тебе около лет пятидесяти") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+	
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [60,76]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что ты старше пятидесяти лет") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
+	
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Age in [75,999]) and ($Stage == "sayAge") and ($isPlaying != "True")) => (
+	(sayFast "Звёзды говорят, что тебе чуть меньше лет семидесяти") and 
+	(AgeSaid = "True") and (Stage = "sayEmo")
+)
 
 
-(($Event == "FaceRecognized") and ($Gender == "M")) => (EmotionSay = "Удивительный")
-(($Event == "FaceRecognized") and ($Gender == "F")) => (EmotionSay = "Удивительная")
 
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "happiness")) => "(EmotionSay = "{Весёлый|Позитивный|Кавайный}")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "sadness")) => "(EmotionSay = "{Грустный|Задумчивый|Печальный}")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "surprise")) => "(EmotionSay = "Удивлённый")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "anger")) => "(EmotionSay = "{Хмурый|Серьезный}")
-(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "neutral")) => "(EmotionSay = "{Спокойный|Умудрённый|Задумчивый|Няашный}")
 
-(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "happiness")) => "(EmotionSay = "{Весёлая|Позитивная|Кавайная}")
-(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "sadness")) => "(EmotionSay = "{Грустная|Задумчивая|Печальная}")
-(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "surprise")) => "(EmotionSay = "Удивлённая")
-(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "anger")) => "(EmotionSay = "{Хмурая|Серьезная}")
-(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "neutral")) => "(EmotionSay = "{Спокойная|Умудрённая|Задумчивая|Няашная}")
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "happiness") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Весёлый|Позитивный|Кавайный|Грустный|Задумчивый|Печальный}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
 
-($Event == "FaceRecognized") => (Name = "${NameSay} ${AgeSay} ${EmotionSay}")
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "sadness") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Грустный|Задумчивый|Печальный}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "surprise") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты Удивлённый") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "anger") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Хмурый|Серьезный}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Emotion == "neutral") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Спокойный|Умудрённый|Задумчивый|Няашный}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "happiness") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Весёлая|Позитивная|Кавайная}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "sadness") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Грустная|Задумчивая|Печальная}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "surprise") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты Удивлённая") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "anger") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Хмурая|Серьезная}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Emotion == "neutral") and ($Stage == "sayEmo") and ($isPlaying != "True")) => (
+	(sayFast "по моему, ты {Спокойная|Умудрённая|Задумчивая|Няашная}") and
+	(EmotionSaid = "True") and (Stage = "startConversation")
+)
+
+
+(($Event == "FaceRecognized") and ($Gender == "M") and ($Stage == "sayEmo") and ($isPlaying != "True") and ($EmotionSaid != "True")) => (
+	(sayFast "по моему, ты Удивительный") and (StrangeEmotion = "True") and (Stage = "startConversation")
+)
+
+(($Event == "FaceRecognized") and ($Gender == "F") and ($Stage == "sayEmo") and ($isPlaying != "True") and ($EmotionSaid != "True")) => (
+	(sayFast "по моему, ты Удивительная") and (StrangeEmotion = "True") and (Stage = "startConversation")
+)
+
+
 
 (($Event == "FaceRecognized") and ($Stage == "startConversation") and ($isPlaying != "True"))=> (
 	((GPIO 100 1,1,1,0 4000) or (GPIO 100 0,0,0,1 4000)) and
 	(userName = "{${Gender}:M=Астронавт|F=Астронавтка}") and 
-	((say "${Name}! то, что ты ${EmotionSay} -- это нормально для {твоего вида|твоей планеты|твоей космической расы|жителя твоей планеты|человека|вида высших приматов|гуманоидов|прямоходящих разумных существ|обитателей Земли}.") or (say "Приветствую тебя, ${Name}! ")) and 
-	(Stage = "aboutMe1")
-)
-
-(($Event == "NoInternetFaceRecognized") and ($Stage == "startConversation") and ($isPlaying != "True"))=> (
-	((GPIO 100 1,1,1,0 4000) or (GPIO 100 0,0,0,1 4000)) and
-	((say "${Name}! то, что ты ${EmotionSay} -- это нормально для {твоего вида|твоей планеты|твоей космической расы|жителя твоей планеты|человека|вида высших приматов|гуманоидов|прямоходящих разумных существ|обитателей Земли}.") or (say "Приветствую тебя, ${Name}! ")) and 
+	(sayFast "Твоё состояние нормально для {твоего вида|твоей планеты|твоей космической расы|жителя твоей планеты|человека|вида высших приматов|гуманоидов|прямоходящих разумных существ|обитателей Земли}.") and 
 	(Stage = "aboutMe1")
 )
 
@@ -209,11 +307,6 @@ PingDance = False
 (($Stage == "meaninglessQuestion1") and ($isPlaying != "True")) => (
 	(sayFast "Это твой первый полет в космос или ты бывалый? ") 
 	and (GPIO 100 1,0,1,1 4000)
-	and (Stage = "meaninglessResponsePeep1") and (stayActive)
-)
-
-(($Stage == "meaninglessResponsePeep1") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000)
 	and (Stage = "meaninglessResponseWait1") and (stayActive)
 )
 
@@ -234,11 +327,6 @@ PingDance = False
 (($Stage == "meaninglessQuestion2") and ($isPlaying != "True")) => (
 	(sayFast "Ненавидишь ли ты блокчейн так же, как и я? ") 
 	and (GPIO 100 1,0,1,1 4000)
-	and (Stage = "meaninglessResponsePeep2") and (stayActive)
-)
-
-(($Stage == "meaninglessResponsePeep2") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000)
 	and (Stage = "meaninglessResponseWait2") and (stayActive)
 )
 
@@ -269,12 +357,8 @@ PingDance = False
 
 (($Stage == "meaninglessQuestion3") and ($isPlaying != "True")) => (
 	((sayFast "C3PO просто красавчик! А ты его тоже любишь скажи? ") or (sayFast "Любишь ли ты Илона Маска так же, как люблю его я?"))
-	and (GPIO 100 1,0,1,1 4000) and (Stage = "meaninglessResponsePeep3") and (stayActive)
-)
-
-(($Stage == "meaninglessResponsePeep3") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and
-	(Stage = "meaninglessResponseWait3") and (stayActive)
+	and (GPIO 100 1,0,1,1 4000)
+	and (Stage = "meaninglessResponseWait3") and (stayActive)
 )
 
 (($Stage == "meaninglessResponseWait3") and (($ArduinoInput == "0100") or ($ArduinoInput == "0010") or ($ArduinoInput == "0001"))) => (
@@ -285,18 +369,14 @@ PingDance = False
 (($Stage == "meaninglessResponse3") and ($isPlaying != "True")) => (
 	(GPIO 100 0,1,0,0 4000)
 	and ((sayFast "Мне он очень по душе") or (sayFast "как же он хорош"))
-	and (Stage = "preFactQuestion") and (MeaninglessQuestionStage = "False") and (stayActive)
+	and (Stage = "preFactQuestion")
+	and (MeaninglessQuestionStage = "False") and (stayActive)
 )
 
 (($Stage == "preFactQuestion") and ($isPlaying != "True")) => (
 	(sayFast "Хочешь, расскажу что-нибудь занятное про космос?") and
 	(GPIO 100 1,0,1,1 4000) and
-	(Stage = "preFactResponsePeep")
-)
-
-(($Stage == "preFactResponsePeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and
-	(Stage = "preFactResponseWait") and (stayActive)
+	(Stage = "preFactResponseWait")
 )
 
 (($Stage == "preFactResponseWait") and ($ArduinoInput == "0100")) => (
@@ -332,11 +412,7 @@ PingDance = False
 
 
 (($Stage == "preQuizQuestion") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuestPeep")
-)
-
-(($Stage == "QuizQuestPeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and (Stage = "QuizQuest") and (stayActive)
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю викторину") and (Stage = "QuizQuest")
 )
 
 (($Stage == "QuizQuest") and ($ArduinoInput == "0100")) => (
@@ -370,11 +446,7 @@ PingDance = False
 
 
 (($Stage == "Diag") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuestPeep")
-)
-
-(($Stage == "DiagQuestPeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and (Stage = "DiagQuest") and (stayActive)
+	(GPIO 100 1,0,1,1 4000) and (sayFast "предлагаю диагностику") and (Stage = "DiagQuest")
 )
 
 (($Stage == "DiagQuest") and ($ArduinoInput == "0100")) => (
@@ -411,11 +483,7 @@ PingDance = False
 
 
 (($Stage == "Disco") and ($isPlaying != "True")) => (
-	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuestPeep")
-)
-
-(($Stage == "DanceQuestPeep") and ($isPlaying != "True")) => (
-	(play 100 "peep.wav" 1000) and (Stage = "DanceQuest") and (stayActive)
+	(GPIO 100 1,0,1,1 25000) and (sayFast "давай танцевать! что думаешь?") and (Stage = "DanceQuest")
 )
 
 (($Stage == "DanceQuest") and ($ArduinoInput == "0100")) => (
